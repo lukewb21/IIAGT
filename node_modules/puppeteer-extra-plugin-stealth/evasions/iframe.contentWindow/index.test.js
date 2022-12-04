@@ -39,9 +39,9 @@ test('stealth: will not break iframes', async t => {
     const { document } = window // eslint-disable-line
     const body = document.querySelector('body')
     const iframe = document.createElement('iframe')
-    iframe.srcdoc = 'foobar'
-    iframe.contentWindow.mySuperFunction = () => returnValue
+    body.srcdoc = 'foobar'
     body.appendChild(iframe)
+    iframe.contentWindow.mySuperFunction = () => returnValue
   }, testFuncReturnValue)
   const realReturn = await page.evaluate(
     () => document.querySelector('iframe').contentWindow.mySuperFunction() // eslint-disable-line
@@ -133,36 +133,6 @@ test('vanilla: will not have chrome runtine in any frame', async t => {
   t.is(typeof srcdociframe, 'undefined')
 })
 
-test('vanilla: will return empty srcdoc by default', async t => {
-  const browser = await vanillaPuppeteer.launch({ headless: true })
-  const page = await browser.newPage()
-
-  const srcdoc = await page.evaluate(returnValue => {
-    const { document } = window // eslint-disable-line
-    const iframe = document.createElement('iframe')
-    return iframe.srcdoc
-  })
-  await browser.close()
-
-  t.is(srcdoc, '')
-})
-
-test('stealth: will return empty srcdoc by default', async t => {
-  const browser = await addExtra(vanillaPuppeteer)
-    .use(Plugin())
-    .launch({ headless: true })
-  const page = await browser.newPage()
-
-  const srcdoc = await page.evaluate(returnValue => {
-    const { document } = window // eslint-disable-line
-    const iframe = document.createElement('iframe')
-    return iframe.srcdoc
-  })
-  await browser.close()
-
-  t.is(srcdoc, '')
-})
-
 test('stealth: it will cover all frames including srcdoc', async t => {
   // const browser = await vanillaPuppeteer.launch({ headless: false })
   const browser = await addExtra(vanillaPuppeteer)
@@ -216,6 +186,70 @@ test('stealth: it will cover all frames including srcdoc', async t => {
   }
 })
 
+test('vanilla: will allow to define property contentWindow', async t => {
+  const browser = await vanillaPuppeteer.launch({ headless: true })
+  const page = await browser.newPage()
+
+  const iframe = await page.evaluate(() => {
+    const { document } = window // eslint-disable-line
+    const iframe = document.createElement('iframe')
+    iframe.srcdoc = 'foobar'
+    return Object.defineProperty(iframe, 'contentWindow', { value: 'baz' })
+  })
+  await browser.close()
+
+  t.is(typeof iframe, 'object')
+})
+
+// test('stealth: will allow to define property contentWindow', async t => {
+//   const browser = await addExtra(vanillaPuppeteer)
+//     .use(Plugin())
+//     .launch({ headless: true })
+//   const page = await browser.newPage()
+
+//   const iframe = await page.evaluate(() => {
+//     const { document } = window // eslint-disable-line
+//     const iframe = document.createElement('iframe')
+//     iframe.srcdoc = 'foobar'
+//     return Object.defineProperty(iframe, 'contentWindow', { value: 'baz' })
+//   })
+//   await browser.close()
+
+//   t.is(typeof iframe, 'object')
+// })
+
+test('vanilla: will return undefined for getOwnPropertyDescriptor of contentWindow', async t => {
+  const browser = await vanillaPuppeteer.launch({ headless: true })
+  const page = await browser.newPage()
+
+  const iframe = await page.evaluate(() => {
+    const { document } = window // eslint-disable-line
+    const iframe = document.createElement('iframe')
+    iframe.srcdoc = 'foobar'
+    return Object.getOwnPropertyDescriptor(iframe, 'contentWindow')
+  })
+  await browser.close()
+
+  t.is(iframe, undefined)
+})
+
+// test('stealth: will return undefined for getOwnPropertyDescriptor of contentWindow', async t => {
+//   const browser = await addExtra(vanillaPuppeteer)
+//     .use(Plugin())
+//     .launch({ headless: true })
+//   const page = await browser.newPage()
+
+//   const iframe = await page.evaluate(() => {
+//     const { document } = window // eslint-disable-line
+//     const iframe = document.createElement('iframe')
+//     iframe.srcdoc = 'foobar'
+//     return Object.getOwnPropertyDescriptor(iframe, 'contentWindow')
+//   })
+//   await browser.close()
+
+//   t.is(iframe, undefined)
+// })
+
 /* global HTMLIFrameElement */
 test('stealth: it will emulate advanved contentWindow features correctly', async t => {
   // const browser = await vanillaPuppeteer.launch({ headless: false })
@@ -241,13 +275,12 @@ test('stealth: it will emulate advanved contentWindow features correctly', async
     basicIframe.src = 'data:text/plain;charset=utf-8,foobar'
     document.body.appendChild(iframe)
 
-    results.descriptorsOK = (() => {
+    results.descriptors = (() => {
       // Verify iframe prototype isn't touched
       const descriptors = Object.getOwnPropertyDescriptors(
         HTMLIFrameElement.prototype
       )
-      const str = descriptors.contentWindow.get.toString()
-      return str === `function get contentWindow() { [native code] }`
+      return descriptors.contentWindow.get.toString()
     })()
 
     results.noProxySignature = (() => {
@@ -311,7 +344,7 @@ test('stealth: it will emulate advanved contentWindow features correctly', async
     return
   }
 
-  t.true(results.descriptorsOK)
+  t.is(results.descriptors, 'function get contentWindow() { [native code] }')
   t.true(results.doesExist)
   t.true(results.isNotAClone)
   t.true(results.hasPlugins)
@@ -322,73 +355,94 @@ test('stealth: it will emulate advanved contentWindow features correctly', async
   t.false(results.StackTraces.includes(`at Object.apply`))
 })
 
-// NOTE: This test is flaky in CI and temporarily disabled
-// test('regression: new method will not break recaptcha popup', async t => {
-//   // const browser = await vanillaPuppeteer.launch({ headless: false })
-//   const browser = await addExtra(vanillaPuppeteer)
-//     .use(Plugin())
-//     .launch({ headless: true })
-//   const page = await browser.newPage()
+test('regression: new method will not break hcaptcha', async t => {
+  const browser = await addExtra(vanillaPuppeteer)
+    .use(Plugin())
+    .launch({ headless: true })
+  const page = await browser.newPage()
 
-//   page.waitForTimeout = page.waitForTimeout || page.waitFor
+  page.waitForTimeout = page.waitForTimeout || page.waitFor
 
-//   await page.goto('https://www.fbdemo.com/invisible-captcha/index.html')
+  await page.goto('https://democaptcha.com/demo-form-eng/hcaptcha.html', {
+    waitUntil: 'networkidle2'
+  })
+  await page.evaluate(() => {
+    window.hcaptcha.execute()
+  })
+  await page.waitForTimeout(2 * 1000)
+  const { hasChallengePopup } = await page.evaluate(() => {
+    const hasChallengePopup = !!document.querySelectorAll(
+      `div[style*='visible'] iframe[title*='hCaptcha challenge']`
+    ).length
+    return { hasChallengePopup }
+  })
+  await browser.close()
+  t.true(hasChallengePopup)
+})
 
-//   await page.type('#tswname', 'foo')
-//   await page.type('#tswemail', 'foo@foo.foo')
-//   await page.type(
-//     '#tswcomments',
-//     'In the depth of winter, I finally learned that within me there lay an invincible summer.'
-//   )
-//   await page.click('#tswsubmit')
-//   await page.waitForTimeout(1000)
+test('regression: new method will not break recaptcha popup', async t => {
+  // const browser = await vanillaPuppeteer.launch({ headless: false })
+  const browser = await addExtra(vanillaPuppeteer)
+    .use(Plugin())
+    .launch({ headless: true })
+  const page = await browser.newPage()
 
-//   const { hasRecaptchaPopup } = await page.evaluate(() => {
-//     const hasRecaptchaPopup = !!document.querySelectorAll(
-//       `iframe[title="recaptcha challenge"]`
-//     ).length
-//     return { hasRecaptchaPopup }
-//   })
+  page.waitForTimeout = page.waitForTimeout || page.waitFor
 
-//   await browser.close()
+  await page.goto('https://www.fbdemo.com/invisible-captcha/index.html', {
+    waitUntil: 'networkidle2'
+  })
 
-//   t.true(hasRecaptchaPopup)
-// })
+  await page.type('#tswname', 'foo')
+  await page.type('#tswemail', 'foo@foo.foo')
+  await page.type(
+    '#tswcomments',
+    'In the depth of winter, I finally learned that within me there lay an invincible summer.'
+  )
+  await page.click('#tswsubmit')
+  await page.waitForTimeout(1000)
+  const { hasRecaptchaPopup } = await page.evaluate(() => {
+    const hasRecaptchaPopup = !!document.querySelectorAll(
+      `iframe[title*="recaptcha challenge"]`
+    ).length
+    return { hasRecaptchaPopup }
+  })
+  await browser.close()
+  t.true(hasRecaptchaPopup)
+})
 
-// test('regression: old method indeed did break recaptcha popup', async t => {
-//   const browser = await vanillaPuppeteer.launch({ headless: true })
-//   const page = await browser.newPage()
+test('regression: old method indeed did break recaptcha popup', async t => {
+  const browser = await vanillaPuppeteer.launch({ headless: true })
+  const page = await browser.newPage()
 
-//   page.waitForTimeout = page.waitForTimeout || page.waitFor
-//   // Old method
-//   await page.evaluateOnNewDocument(() => {
-//     // eslint-disable-next-line
-//     Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
-//       get: function() {
-//         return window
-//       }
-//     })
-//   })
+  page.waitForTimeout = page.waitForTimeout || page.waitFor
+  // Old method
+  await page.evaluateOnNewDocument(() => {
+    // eslint-disable-next-line
+    Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
+      get: function() {
+        return window
+      }
+    })
+  })
+  await page.goto('https://www.fbdemo.com/invisible-captcha/index.html', {
+    waitUntil: 'networkidle2'
+  })
+  await page.type('#tswname', 'foo')
+  await page.type('#tswemail', 'foo@foo.foo')
+  await page.type(
+    '#tswcomments',
+    'In the depth of winter, I finally learned that within me there lay an invincible summer.'
+  )
+  await page.click('#tswsubmit')
+  await page.waitForTimeout(1000)
 
-//   await page.goto('https://www.fbdemo.com/invisible-captcha/index.html')
-
-//   await page.type('#tswname', 'foo')
-//   await page.type('#tswemail', 'foo@foo.foo')
-//   await page.type(
-//     '#tswcomments',
-//     'In the depth of winter, I finally learned that within me there lay an invincible summer.'
-//   )
-//   await page.click('#tswsubmit')
-//   await page.waitForTimeout(1000)
-
-//   const { hasRecaptchaPopup } = await page.evaluate(() => {
-//     const hasRecaptchaPopup = !!document.querySelectorAll(
-//       `iframe[title="recaptcha challenge"]`
-//     ).length
-//     return { hasRecaptchaPopup }
-//   })
-
-//   await browser.close()
-
-//   t.false(hasRecaptchaPopup)
-// })
+  const { hasRecaptchaPopup } = await page.evaluate(() => {
+    const hasRecaptchaPopup = !!document.querySelectorAll(
+      `iframe[title*="recaptcha challenge"]`
+    ).length
+    return { hasRecaptchaPopup }
+  })
+  await browser.close()
+  t.false(hasRecaptchaPopup)
+})

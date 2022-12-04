@@ -3,8 +3,8 @@ async function mainProgram() {
 
 let mysql = require('mysql2/promise');
 
-let FilmID = 'tt0096283';
-let userAge = 48;
+let FilmID = 'tt0371746';
+let userAge = 50;
 let LocalScore = 0;
 let ageBracket = 0;
 
@@ -62,12 +62,36 @@ function NullToZero(group) {
 	return group;
 }
 
+function BoolZero(group) {
+	if (group > 0){
+		bool = 'false';
+		return 1;
+	}
+	bool = 'true';
+	return 0;
+}
+
 Final1 = NullToZero(Final1);
 Final2 = NullToZero(Final2);
 Final3 = NullToZero(Final3);
 Final4 = NullToZero(Final4);
 Final5 = NullToZero(Final5);
 Final6 = NullToZero(Final6);
+
+let bool = '';
+
+let Bool1 = BoolZero(Final1);
+console.log('Group 1 is zero?', bool);
+let Bool2 = BoolZero(Final2);
+console.log('Group 2 is zero?', bool);
+let Bool3 = BoolZero(Final3);
+console.log('Group 3 is zero?', bool);
+let Bool4 = BoolZero(Final4);
+console.log('Group 4 is zero?', bool);
+let Bool5 = BoolZero(Final5);
+console.log('Group 5 is zero?', bool);
+let Bool6 = BoolZero(Final6);
+console.log('Group 6 is zero?', bool);
 
 console.log('Group 1 Average:', Final1);
 console.log('Group 2 Average:', Final2);
@@ -87,27 +111,27 @@ console.log('Age group of user:', ageBracket);
 
 switch (ageBracket) {//AGE:0-8                9-16              17-21              22-40              41-60               61+
 	case 1: //                X
-		LocalScore = ( ((Final1 * 1.000) + (Final2 * 0.500) + (Final3 * 0.250) + (Final4 * 0.125) + (Final5 * 0.125) + (Final6 * 0.125)) / 2.125 );
+		LocalScore = ( ((Final1 * 1.000) + (Final2 * 0.500) + (Final3 * 0.250) + (Final4 * 0.125) + (Final5 * 0.125) + (Final6 * 0.125)) / ((Bool1 * 1.000) + (Bool2 * 0.500) + (Bool3 * 0.250) + (Bool4 * 0.125) + (Bool5 * 0.125) + (Bool6 * 0.125)) );
 		console.log('Group 1 Score:', LocalScore);
 		break;
 	case 2: //                                   X
-		LocalScore = ( ((Final1 * 0.500) + (Final2 * 1.000) + (Final3 * 0.625) + (Final4 * 0.500) + (Final5 * 0.375) + (Final6 * 0.375)) / 3.375 );
+		LocalScore = ( ((Final1 * 0.500) + (Final2 * 1.000) + (Final3 * 0.625) + (Final4 * 0.500) + (Final5 * 0.375) + (Final6 * 0.375)) / ((Bool1 * 0.500) + (Bool2 * 1.000) + (Bool3 * 0.625) + (Bool4 * 0.500) + (Bool5 * 0.375) + (Bool6 * 0.375)) );
 		console.log('Group 2 Score:', LocalScore);
 		break;
 	case 3: //                                                      X
-		LocalScore = ( ((Final1 * 0.250) + (Final2 * 0.625) + (Final3 * 1.000) + (Final4 * 0.625) + (Final5 * 0.500) + (Final6 * 0.375)) / 3.375 );
+		LocalScore = ( ((Final1 * 0.250) + (Final2 * 0.625) + (Final3 * 1.000) + (Final4 * 0.625) + (Final5 * 0.500) + (Final6 * 0.375)) / ((Bool1 * 0.250) + (Bool2 * 0.625) + (Bool3 * 1.000) + (Bool4 * 0.625) + (Bool5 * 0.500) + (Bool6 * 0.375)) );
 		console.log('Group 3 Score:', LocalScore);
 		break;
 	case 4: //                                                                         X
-		LocalScore = ( ((Final1 * 0.125) + (Final2 * 0.500) + (Final3 * 0.625) + (Final4 * 1.000) + (Final5 * 0.625) + (Final6 * 0.500)) / 3.375 );
+		LocalScore = ( ((Final1 * 0.125) + (Final2 * 0.500) + (Final3 * 0.625) + (Final4 * 1.000) + (Final5 * 0.625) + (Final6 * 0.500)) / ((Bool1 * 0.125) + (Bool2 * 0.500) + (Bool3 * 0.625) + (Bool4 * 1.000) + (Bool5 * 0.625) + (Bool6 * 0.500)) );
 		console.log('Group 4 Score:', LocalScore);
 		break;
 	case 5: //                                                                                            X
-		LocalScore = ( ((Final1 * 0.125) + (Final2 * 0.250) + (Final3 * 0.500) + (Final4 * 0.750) + (Final5 * 1.000) + (Final6 * 0.750)) / 3.375 );
+		LocalScore = ( ((Final1 * 0.125) + (Final2 * 0.250) + (Final3 * 0.500) + (Final4 * 0.750) + (Final5 * 1.000) + (Final6 * 0.750)) / ((Bool1 * 0.125) + (Bool2 * 0.250) + (Bool3 * 0.500) + (Bool4 * 0.750) + (Bool5 * 1.000) + (Bool6 * 0.750)) );
 		console.log('Group 5 Score:', LocalScore);
 		break;
 	case 6: //                                                                                                               X
-		LocalScore = ( ((Final1 * 0.125) + (Final2 * 0.125) + (Final3 * 0.500) + (Final4 * 0.625) + (Final5 * 0.750) + (Final6 * 1.000)) / 3.125 );
+		LocalScore = ( ((Final1 * 0.125) + (Final2 * 0.125) + (Final3 * 0.500) + (Final4 * 0.625) + (Final5 * 0.750) + (Final6 * 1.000)) / ((Bool1 * 0.125) + (Bool2 * 0.125) + (Bool3 * 0.500) + (Bool4 * 0.625) + (Bool5 * 0.750) + (Bool6 * 1.000)) );
 		console.log('Group 6 Score:', LocalScore);
 		break;
 	default:
@@ -117,6 +141,13 @@ switch (ageBracket) {//AGE:0-8                9-16              17-21           
 			console.log(rows);
 		});
 }
+
+
+let IMDbScoreQ = await connection.query("SELECT averageRating as avg_rating FROM imdb_ratings WHERE (tconst ='" + FilmID + "')");
+
+let IMDbScore = IMDbScoreQ[0][0].avg_rating;
+
+console.log('IMDb Rating:', IMDbScore);
 
 connection.end();
 
