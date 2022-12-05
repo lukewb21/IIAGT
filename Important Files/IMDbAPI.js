@@ -1,21 +1,41 @@
-const axios = require("axios");
+async function GetMovieInfo(search_query) {
 
-const options3 = {
-  method: 'GET',
-  url: 'https://flixster.p.rapidapi.com/reviews/list',
-  params: {emsId: 'cbad9abb-8440-31a6-8caf-61ae45c2263b', limit: '20', offset: '0', withComments: 'true'},
-  headers: {
-    'X-RapidAPI-Key': '2ccadb270fmsh47baaaf5c69f6a1p12988cjsnab0cf8ac2ead',
-    'X-RapidAPI-Host': 'flixster.p.rapidapi.com'
-  }
-};
+  var resultsArray = [];
+  const axios = require("axios");
 
-axios.request(options3).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
+  // ESTABLISH LINK WITH API//
+  const options = {
+    method: 'GET',
+    url: 'https://online-movie-database.p.rapidapi.com/title/find',
+    params: {q: search_query},
+    headers: {
+      'X-RapidAPI-Key': '2ccadb270fmsh47baaaf5c69f6a1p12988cjsnab0cf8ac2ead',
+      'X-RapidAPI-Host': 'online-movie-database.p.rapidapi.com'
+    }
+  };
 
-let rating = options3[1];
+  // MAKE REQUEST TO API//
+  let output = await axios.request(options).then(function (response) {
+    resultsArray = response.data;
+  }).catch(function (error) {
+    console.error(error);
+  });
 
-console.log('OUTPUT:', options3);
+  // FIND INFO OF TOP RESULT//
+  let movieID = resultsArray['results'][0]['id'].slice(7, 15);
+
+  let movieName = resultsArray['results'][0]['title'];
+
+  let releaseYear = resultsArray['results'][0]['year'];
+
+  let runtime = resultsArray['results'][0]['runningTimeInMinutes'];
+
+  console.log('QUERY NAME:', search_query);
+  console.log('RESULT NAME:', movieName);
+  console.log('RELEASE YEAR:', releaseYear);
+  console.log('RUNTIME:', runtime);
+  console.log('MOVIE ID:', movieID);
+
+}
+
+GetMovieInfo('Spirited Away');

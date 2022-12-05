@@ -1,10 +1,7 @@
-async function mainProgram() {
-
+async function CalcWeightedScore(FilmID, userAge) {
 
 let mysql = require('mysql2/promise');
 
-let FilmID = 'tt0371746';
-let userAge = 50;
 let LocalScore = 0;
 let ageBracket = 0;
 
@@ -19,16 +16,12 @@ const connection = await mysql.createConnection({
 	password : 'IsItGood?2022'
 });
 
-
-
 //Queries database for number of ratings//
 let TotalRatings = await connection.query("SELECT COUNT(FilmID) as total_ratings FROM film_reviews WHERE (FilmID ='" + FilmID + "')");
 TotalRatings = TotalRatings[0][0].total_ratings;
 console.log('Total Ratings: ', TotalRatings)
-//Sets flag to display accuracy warning if film has few ratings//
-//If TotalRatings < 100 {
-//	WarnUser = True;
-//}
+//ADD CODE TO WARN USER OF LOW RATING COUNT HERE//
+
 
 //Queries database for ratings by users under 8 years of age//
 let Group1AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = Users.UserID WHERE (FilmID ='" + FilmID + "') AND (age <= 8)");
@@ -142,16 +135,14 @@ switch (ageBracket) {//AGE:0-8                9-16              17-21           
 		});
 }
 
-
 let IMDbScoreQ = await connection.query("SELECT averageRating as avg_rating FROM imdb_ratings WHERE (tconst ='" + FilmID + "')");
 
-let IMDbScore = IMDbScoreQ[0][0].avg_rating;
+let IMDbScore = IMDbScoreQ[0][0];
 
 console.log('IMDb Rating:', IMDbScore);
 
 connection.end();
 
-
 }
 
-mainProgram();
+CalcWeightedScore();
