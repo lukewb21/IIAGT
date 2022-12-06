@@ -5,6 +5,7 @@ const express = require('express');
 const ejs = require('ejs');
 const cors = require('cors');
 const axios = require('axios');
+const http = require('http');
 require('dotenv').config();
 
 // store port so i dont have to remember it //
@@ -46,8 +47,8 @@ async function GetMovieID(search_query) {
   });
 
   // FIND INFO OF TOP RESULT//
-  let movieID = resultsArray['results'][0]['id'].slice(7, 16);
-  InfoReturn = movieID;
+  let movieID = resultsArray['results'][0]['id'].slice(7, 17);
+  InfoReturn = movieID.replace('/', '');
   console.log('MOVIE ID FROM FUNCTION:', InfoReturn);
   return(InfoReturn);
 }
@@ -193,7 +194,7 @@ async function CalcWeightedScore(FilmID, userAge) {
 
   let IMDbScoreQ = await connection.query("SELECT averageRating FROM imdb_ratings WHERE (tconst ='" + FilmID + "')");
 
-  let IMDbScore = IMDbScoreQ[0][0].averageRating;
+  let IMDbScore = IMDbScoreQ[0][0];
 
   CalcReturn = LocalScore;
 
@@ -230,10 +231,21 @@ let AgeRating = resultsArray['Rated'];
 let Runtime = resultsArray['Runtime'];
 let Genres = resultsArray['Genre'];
 let IMDbRating = resultsArray['imdbRating'];
-let RottenTomatoesScore = resultsArray['Ratings'][1]['Value'];
 let MoviePosterSRC = resultsArray['Poster'];
 
-let InfoReturn = [Title, Year, AgeRating, Runtime, Genres, IMDbRating, RottenTomatoesScore, MoviePosterSRC];
+
+if (JSON.stringify(resultsArray).includes("Rotten Tomatoes")){
+  let RottenTomatoesScore = resultsArray['Ratings'][1]['Value'];
+  let InfoReturn = [Title, Year, AgeRating, Runtime, Genres, IMDbRating, MoviePosterSRC, RottenTomatoesScore];
+  return(InfoReturn);
+} else {
+  let InfoReturn = [Title, Year, AgeRating, Runtime, Genres, IMDbRating, MoviePosterSRC, null];
+  return(InfoReturn);
+}
+
+
+
+
 
 console.log(Title);
 console.log(Year);
@@ -241,11 +253,8 @@ console.log(AgeRating);
 console.log(Runtime);
 console.log(Genres);
 console.log(IMDbRating);
-console.log(RottenTomatoesScore);
 console.log(MoviePosterSRC);
 
-
-return(InfoReturn);
 }
 
 //  GET Routes - display pages without user input  //
@@ -272,22 +281,48 @@ app.get('/search', async function (req, res) {
 
   // GET FILM INFO IN ARRAY [Title, Year, AgeRating, Runtime, Genres, IMDbRating, RottenTomatoesScore, MoviePosterSRC] //
   let InfoArray = await GetFilmInfo(FilmID);
-  console.log(InfoArray);
+  console.log('ARRAY:', InfoArray);
   let Title = InfoArray[0];
   let Year = InfoArray[1];
   let AgeRating = InfoArray[2];
   let Runtime = InfoArray[3];
   let Genres = InfoArray[4];
   let IMDbRating = InfoArray[5];
-  let MoviePosterSRC = InfoArray[7];
-  let RottenTomatoesScore = parseInt(InfoArray[6].slice(0, 2));
+  let MoviePosterSRC = InfoArray[6];
+  let RottenTomatoesScore = InfoArray[7];
+  console.log('IMG SRC', MoviePosterSRC);
 
-  console.log('POSTER LINK', MoviePosterSRC);
+  // Error Handling for Missing IMDb Data //
+  if (IMDbRating == 'N/A') {
+    IMDbRating = false;
+    let IMDbBool = false;
+  } else {
+    let IMDbBool = true;
+  }
+
+  // Error Handling for Missing RT Data //
+  if (RottenTomatoesScore == null) {
+    RottenTomatoesScore = false;
+    let RTBool = false;
+  } else {
+    RottenTomatoesScore = parseInt(RottenTomatoesScore.slice(0, 2));
+    let RTBool = true;
+  }
+
+  // Error Handling for Final Score //
+  if ((RTBool = true) && (IMDbBool = true)) {
+    FinalScore = (IMDbRating * RottenTomatoesScore);
+  } else {
+    FinalScore = false;
+  }
 
   // GET LOCAL SCORE BASED ON AGE //
-  let LocalScore = 6.22; //await CalcWeightedScore(FilmID, UserAge);
+  let LocalScore = await CalcWeightedScore(FilmID, UserAge);
 
-  FinalScore = (IMDbRating * RottenTomatoesScore);
+  // Error Handling for Age Based Score //
+  if (isNaN(LocalScore)) {
+    LocalScore = false;
+  }
 
   res.render('pages/_Search', {
     IMDbRating: IMDbRating,

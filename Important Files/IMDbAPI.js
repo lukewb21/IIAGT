@@ -28,7 +28,7 @@ async function GetMovieID(search_query) {
   return(InfoReturn);
 }
 
-let test = await GetMovieID('Sonic The Hedgehog');
+let test = await GetMovieID('Violent Night');
 
 console.log(test);
 }

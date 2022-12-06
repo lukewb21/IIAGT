@@ -1,28 +1,67 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-<head>
-  <%- include('../partials/_head') %>
-
-  <style>
-
-  </style>
-
-</head>
+<%- include('../partials/_head') %>
 
 <body>
-  <div id="container">
-    <%- include('../partials/_background') %>
-    <p><strong>Title: <%= FilmName %></strong></p>
-    <p><strong>Release Year: <%= FilmYear %></strong></p>
-    <p><strong>Genres: <%= Genres %></strong></p>
-    <p><strong>Runtime: <%= FilmRuntime %></strong></p>
-    <p><strong>Age Rating: <%= AgeRating %></strong></p>
-    <p><strong>IMDb Rating: <%= IMDbRating %></strong></p>
-    <p><strong>Rotten Tomatoes Score: <%= RTScore %></strong></p>
-    <p><strong>IIAGT Rating: <%= LocalRating %></strong></p>
-    <p><strong>Score for your age group: <%= AgeScore %></strong></p>
-
-    <img src="<%= PosterSRC %>"></img>
-    <%- include('../partials/_foot') %>
+  <%- include('../partials/_background') %>
+  <div class="content">
+    <header>
+      <h1 id="pagetitle">IS IT ACTUALLY GOOD?</h1>
+    </header>
   </div>
-</body>
+  <section class="layout">
+
+<div class="wrapper">
+
+    <div class="one">
+      <br>
+      <center>
+        <img src="<%= PosterSRC %>"></img>
+        <h1 style="color: white;"><%= FilmName %> (<%= FilmYear %>)</h1>
+        <p><strong>Genres: <%= Genres %></strong></p>
+      </center>
+    </div>
+
+
+
+    <div class="two">
+
+
+
+      <p><strong>Runtime: <%= FilmRuntime %></strong></p>
+
+      <p><strong>Age Rating: <%= AgeRating %></strong></p>
+
+      <% if(IMDbRating != false){ %>
+        <p><strong>IMDb Rating: <%= IMDbRating %></strong></p>
+      <% } else { %>
+        <p><strong>Sorry! IMDb Score not found for this title.</strong></p>
+      <% } %>
+
+      <% if(RTScore != false){ %>
+        <p><strong>Rotten Tomatoes Score: <%= RTScore %></strong></p>
+      <% } else { %>
+        <p><strong>Sorry! RT Score not found for this title.</strong></p>
+      <% } %>
+
+      <% if(FinalScore != false){ %>
+        <p><strong>IIAGT Rating: <%= LocalRating %></strong></p>
+      <% } else { %>
+        <p><strong>Sorry! Unavailable due to missing ratings data.</strong></p>
+      <% } %>
+
+      <% if(AgeScore != false){ %>
+        <p><strong>Score for your age group: <%= AgeScore %></strong></p>
+      <% } else { %>
+        <p><strong>Sorry! There are no IsItGood reviews for this title yet.</strong></p>
+      <% } %>
+    </div>
+    </section>
+
+
+
+
+
+
+    <%- include('../partials/_foot') %>
+  </body>
