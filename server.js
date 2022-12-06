@@ -19,16 +19,10 @@ app.set('view engine', 'ejs');
 // Port website will run on //
 app.listen(PORT, () => console.log('SERVER RUNNING ON PORT ' + PORT));
 
-
-
-
-
-
-
 // FUNCTIONS //
 
 // GET MOVIE ID //
-async function GetMovieInfo(search_query) {
+async function GetMovieID(search_query) {
 
   var resultsArray = [];
   const axios = require("axios");
@@ -53,20 +47,9 @@ async function GetMovieInfo(search_query) {
 
   // FIND INFO OF TOP RESULT//
   let movieID = resultsArray['results'][0]['id'].slice(7, 16);
-
-  let movieName = resultsArray['results'][0]['title'];
-
-  let releaseYear = resultsArray['results'][0]['year'];
-
-  let runtime = resultsArray['results'][0]['runningTimeInMinutes'];
-
-  console.log('QUERY NAME:', search_query);
-  console.log('RESULT NAME:', movieName);
-  console.log('RELEASE YEAR:', releaseYear);
-  console.log('RUNTIME:', runtime);
-  console.log('MOVIE ID:', movieID);
-
-  return(movieID);
+  InfoReturn = movieID;
+  console.log('MOVIE ID FROM FUNCTION:', InfoReturn);
+  return(InfoReturn);
 }
 
 // SCORE CALCULATOR //
@@ -212,17 +195,58 @@ async function CalcWeightedScore(FilmID, userAge) {
 
   let IMDbScore = IMDbScoreQ[0][0].averageRating;
 
-  CalcReturn = [LocalScore, IMDbScore];
+  CalcReturn = LocalScore;
 
 
   connection.end();
   return(CalcReturn);
 }
 
+// GET FILM INFORMATION //
+
+async function GetFilmInfo(FilmID) {
+const axios = require("axios");
+
+const options = {
+  method: 'GET',
+  url: 'https://movie-database-alternative.p.rapidapi.com/',
+  params: {r: 'json', i: FilmID, type: 'movie'},
+  headers: {
+    'X-RapidAPI-Key': '2ccadb270fmsh47baaaf5c69f6a1p12988cjsnab0cf8ac2ead',
+    'X-RapidAPI-Host': 'movie-database-alternative.p.rapidapi.com'
+  }
+};
+
+await axios.request(options).then(function (response) {
+  resultsArray = response.data;
+	console.log(response.data);
+}).catch(function (error) {
+	console.error(error);
+});
+
+let Title = resultsArray['Title'];
+let Year = resultsArray['Year'];
+let AgeRating = resultsArray['Rated'];
+let Runtime = resultsArray['Runtime'];
+let Genres = resultsArray['Genre'];
+let IMDbRating = resultsArray['imdbRating'];
+let RottenTomatoesScore = resultsArray['Ratings'][1]['Value'];
+let MoviePosterSRC = resultsArray['Poster'];
+
+let InfoReturn = [Title, Year, AgeRating, Runtime, Genres, IMDbRating, RottenTomatoesScore, MoviePosterSRC];
+
+console.log(Title);
+console.log(Year);
+console.log(AgeRating);
+console.log(Runtime);
+console.log(Genres);
+console.log(IMDbRating);
+console.log(RottenTomatoesScore);
+console.log(MoviePosterSRC);
 
 
-
-
+return(InfoReturn);
+}
 
 //  GET Routes - display pages without user input  //
 // Root Route //
@@ -236,14 +260,47 @@ app.get('/', function (req, res) {
 app.get('/search', async function (req, res) {
   console.log('parameters:', req.query);
   let parameters = req.query;
+
+  // GET USERS SEARCH TERM //
   let SearchQuery = parameters['ID'];
+
+  // GET USERS AGE //
   let UserAge = parameters['AGE'];
-  let FilmID = await GetMovieInfo(SearchQuery);
-  console.log('IMDB FILM ID =', FilmID);
-  let CalcArray = await CalcWeightedScore(FilmID, 17);
-  let IMDbRating = CalcArray[1];
-  let LocalRating = CalcArray[0];
-  res.render('pages/_Search');
+
+  // GET IMDB ID OF FILM //
+  let FilmID = await GetMovieID(SearchQuery);
+
+  // GET FILM INFO IN ARRAY [Title, Year, AgeRating, Runtime, Genres, IMDbRating, RottenTomatoesScore, MoviePosterSRC] //
+  let InfoArray = await GetFilmInfo(FilmID);
+  console.log(InfoArray);
+  let Title = InfoArray[0];
+  let Year = InfoArray[1];
+  let AgeRating = InfoArray[2];
+  let Runtime = InfoArray[3];
+  let Genres = InfoArray[4];
+  let IMDbRating = InfoArray[5];
+  let MoviePosterSRC = InfoArray[7];
+  let RottenTomatoesScore = parseInt(InfoArray[6].slice(0, 2));
+
+  console.log('POSTER LINK', MoviePosterSRC);
+
+  // GET LOCAL SCORE BASED ON AGE //
+  let LocalScore = 6.22; //await CalcWeightedScore(FilmID, UserAge);
+
+  FinalScore = (IMDbRating * RottenTomatoesScore);
+
+  res.render('pages/_Search', {
+    IMDbRating: IMDbRating,
+    RTScore: RottenTomatoesScore,
+    LocalRating: FinalScore,
+    AgeScore: LocalScore,
+    FilmName: Title,
+    FilmYear: Year,
+    FilmRuntime: Runtime,
+    AgeRating: AgeRating,
+    Genres: Genres,
+    PosterSRC: MoviePosterSRC
+  });
 
 
 

@@ -1,4 +1,5 @@
-async function GetMovieInfo(search_query) {
+async function Program(){
+async function GetMovieID(search_query) {
 
   var resultsArray = [];
   const axios = require("axios");
@@ -22,20 +23,14 @@ async function GetMovieInfo(search_query) {
   });
 
   // FIND INFO OF TOP RESULT//
-  let movieID = resultsArray['results'][0]['id'].slice(7, 15);
-
-  let movieName = resultsArray['results'][0]['title'];
-
-  let releaseYear = resultsArray['results'][0]['year'];
-
-  let runtime = resultsArray['results'][0]['runningTimeInMinutes'];
-
-  console.log('QUERY NAME:', search_query);
-  console.log('RESULT NAME:', movieName);
-  console.log('RELEASE YEAR:', releaseYear);
-  console.log('RUNTIME:', runtime);
-  console.log('MOVIE ID:', movieID);
-
+  let movieID = resultsArray['results'][0]['id'].slice(7, 16);
+  InfoReturn = movieID;
+  return(InfoReturn);
 }
 
-GetMovieInfo('Spirited Away');
+let test = await GetMovieID('Sonic The Hedgehog');
+
+console.log(test);
+}
+
+Program();
