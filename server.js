@@ -6,6 +6,8 @@ const ejs = require('ejs');
 const cors = require('cors');
 const axios = require('axios');
 const http = require('http');
+const path = require('path');
+
 require('dotenv').config();
 
 // store port so i dont have to remember it //
@@ -14,7 +16,7 @@ const PORT = 80;
 // Initialise Express //
 const app = express();
 // Render static files //
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '/public')));
 // set view engine to ejs //
 app.set('view engine', 'ejs');
 // Port website will run on //
