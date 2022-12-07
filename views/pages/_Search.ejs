@@ -6,61 +6,85 @@
   <%- include('../partials/_background') %>
   <div class="content">
     <header>
-      <h1 id="pagetitle">IS IT ACTUALLY GOOD?</h1>
+      <h1 id="pagetitle"><%= TitleText %></h1>
     </header>
   </div>
-  <section class="layout">
 
-<div class="wrapper">
 
-    <div class="one">
-      <br>
-      <center>
-        <img src="<%= PosterSRC %>"></img>
-        <h1 style="color: white;"><%= FilmName %> (<%= FilmYear %>)</h1>
-        <p><strong>Genres: <%= Genres %></strong></p>
-      </center>
+
+
+
+<style>
+  .flex-container {
+
+    display: flex;
+    height: 100%;
+    padding: 15px;
+    gap: 5px;
+
+  }
+
+  .flex-container > div{
+    border-radius: 5px;
+    padding: 8px;
+  }
+
+
+  .item1 {
+      /* flex:1 1 auto; */
+      flex-grow:1;
+    }
+
+  .item2 {
+      /* flex:2 1 auto; */
+      flex-grow:2;
+    }
+
+
+</style>
+
+<div class="flex-container">
+
+    <div class="item1">
+      <img src="<%= PosterSRC %>"></img>
+      <figcaption style="color: white;"><%= FilmName %> (<%= FilmYear %>)</figcaption>
+      <p><strong>Genres: <%= Genres %></strong></p>
     </div>
 
-
-
-    <div class="two">
+    <div class="item2">
 
 
 
-      <p><strong>Runtime: <%= FilmRuntime %></strong></p>
+            <h2><strong>Runtime: <%= FilmRuntime %></strong></h2>
 
-      <p><strong>Age Rating: <%= AgeRating %></strong></p>
+            <h2><strong>Age Rating: <%= AgeRating %></strong></h2>
 
-      <% if(IMDbRating != false){ %>
-        <p><strong>IMDb Rating: <%= IMDbRating %></strong></p>
-      <% } else { %>
-        <p><strong>Sorry! IMDb Score not found for this title.</strong></p>
-      <% } %>
+            <% if(IMDbRating != false){ %>
+              <h2><strong>IMDb Rating: <%= IMDbRating %></strong></h2>
+            <% } else { %>
+              <h2><strong>Sorry! IMDb Score not found for this title.</strong></h2>
+            <% } %>
 
-      <% if(RTScore != false){ %>
-        <p><strong>Rotten Tomatoes Score: <%= RTScore %></strong></p>
-      <% } else { %>
-        <p><strong>Sorry! RT Score not found for this title.</strong></p>
-      <% } %>
+            <% if(RTScore != false){ %>
+              <h2><strong>Rotten Tomatoes Score: <%= RTScore %></strong></h2>
+            <% } else { %>
+              <h2><strong>Sorry! RT Score not found for this title.</strong></h2>
+            <% } %>
 
-      <% if(FinalScore != false){ %>
-        <p><strong>IIAGT Rating: <%= LocalRating %></strong></p>
-      <% } else { %>
-        <p><strong>Sorry! Unavailable due to missing ratings data.</strong></p>
-      <% } %>
+            <% if(FinalScore != false){ %>
+              <h2><strong>IIAGT Rating: <%= LocalRating %></strong></h2>
+            <% } else { %>
+              <h2><strong>Sorry! IsItGood score unavailable due to missing ratings data.</strong></h2>
+            <% } %>
 
-      <% if(AgeScore != false){ %>
-        <p><strong>Score for your age group: <%= AgeScore %></strong></p>
-      <% } else { %>
-        <p><strong>Sorry! There are no IsItGood reviews for this title yet.</strong></p>
-      <% } %>
+            <% if(AgeScore != false){ %>
+              <h2><strong>Score for your age group: <%= AgeScore %></strong></h2>
+            <% } else { %>
+              <h2><strong>Sorry! There are no IsItGood reviews for this title yet.</strong></h2>
+            <% } %>
     </div>
-    </section>
 
-
-
-
+</div>
 
 
     <%- include('../partials/_foot') %>

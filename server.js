@@ -317,12 +317,48 @@ app.get('/search', async function (req, res) {
   }
 
   // GET LOCAL SCORE BASED ON AGE //
-  let LocalScore = await CalcWeightedScore(FilmID, UserAge);
+  let LocalScore = NaN //await CalcWeightedScore(FilmID, UserAge);
 
   // Error Handling for Age Based Score //
   if (isNaN(LocalScore)) {
     LocalScore = false;
   }
+
+  console.log(FinalScore);
+  // TITLE GENERATION //
+  let TitleText = "Maybe good, maybe bad (we don't know)";
+  if (FinalScore != false){
+    switch(true){
+
+      case FinalScore < 100.0:
+        TitleText = "It's the worst!";
+        break;
+
+      case FinalScore >= 100.0 && FinalScore < 200.0:
+        TitleText = "It's pretty bad...";
+        break;
+
+      case FinalScore >= 200.0 && FinalScore < 400.0:
+        TitleText = "OK if you've seen everything else.";
+        break;
+
+      case FinalScore >= 400.0 && FinalScore < 600.0:
+        TitleText = "It's actually decent";
+        break;
+
+      case FinalScore >= 600.0 && FinalScore < 700.0:
+        TitleText = "It's pretty good";
+        break;
+
+      case FinalScore >= 700.0 && FinalScore < 900.0:
+        TitleText = "It's AMAZING!";
+        break;
+
+      case FinalScore >= 900.0:
+        TitleText = "It's probably the best.";
+    }
+  }
+  console.log(TitleText);
 
   res.render('pages/_Search', {
     IMDbRating: IMDbRating,
@@ -334,7 +370,8 @@ app.get('/search', async function (req, res) {
     FilmRuntime: Runtime,
     AgeRating: AgeRating,
     Genres: Genres,
-    PosterSRC: MoviePosterSRC
+    PosterSRC: MoviePosterSRC,
+    TitleText: TitleText
   });
 
 

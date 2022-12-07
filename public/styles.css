@@ -1,7 +1,7 @@
 html, body {
   margin: 0;
   height: 100%;
-  overflow: hidden
+  overflow: hidden;
 }
 
 body {
@@ -10,20 +10,7 @@ body {
   height: 100%;
 }
 
-.wrapper {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  grid-auto-rows: minmax(100px, auto);
-}
 
-.one {
-  margin-left: 5%;
-  grid-column: 1;
-  grid-row: 1 / 4;
-  display: inline-block;
-  border: none;
-}
 
 h1 {
   font-size: 60px;
@@ -32,8 +19,16 @@ h1 {
   border: none;
 }
 
+figcaption {
+  font-size: 60px;
+  color: #4ecda7;
+  white-space: nowrap;
+  border: none;
+  width: 25%;
+}
+
 img {
-  width: 400px;
+  width: 350px;
   border: none;
   border-radius: 5px;
   display: inline-block;
