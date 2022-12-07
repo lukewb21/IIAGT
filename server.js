@@ -9,7 +9,7 @@ const http = require('http');
 require('dotenv').config();
 
 // store port so i dont have to remember it //
-const PORT = 3000;
+const PORT = 80;
 
 // Initialise Express //
 const app = express();
