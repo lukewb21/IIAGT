@@ -307,7 +307,7 @@ app.get('/search', async function (req, res) {
     RottenTomatoesScore = false;
     let RTBool = false;
   } else {
-    RottenTomatoesScore = parseInt(RottenTomatoesScore.slice(0, 2));
+    RottenTomatoesScore = parseInt(RottenTomatoesScore.replace('%', ''));
     let RTBool = true;
   }
 
