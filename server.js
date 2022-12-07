@@ -275,6 +275,7 @@ app.get('/search', async function (req, res) {
   // GET USERS SEARCH TERM //
   let SearchQuery = parameters['ID'];
 
+
   // GET USERS AGE //
   let UserAge = parameters['AGE'];
 
@@ -313,7 +314,7 @@ app.get('/search', async function (req, res) {
 
   // Error Handling for Final Score //
   if ((RTBool = true) && (IMDbBool = true)) {
-    FinalScore = (IMDbRating * RottenTomatoesScore);
+    FinalScore = Math.round((IMDbRating * RottenTomatoesScore));
   } else {
     FinalScore = false;
   }
