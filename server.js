@@ -263,7 +263,6 @@ console.log(MoviePosterSRC);
 //  GET Routes - display pages without user input  //
 // Root Route //
 
-app.use('/.well-known/pki-validation/37FFA09F4A8A1A16DCFF0BCBFA6CF80F.txt', express.static('.well-known/pki-validation/37FFA09F4A8A1A16DCFF0BCBFA6CF80F.txt'));
 
 // GET FAVICON //
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
