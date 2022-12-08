@@ -7,7 +7,6 @@ const cors = require('cors');
 const axios = require('axios');
 const http = require('http');
 const path = require('path');
-const favicon = require('serve-favicon');
 
 require('dotenv').config();
 
@@ -262,11 +261,6 @@ console.log(MoviePosterSRC);
 
 //  GET Routes - display pages without user input  //
 // Root Route //
-
-
-// GET FAVICON //
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-
 
 //DEFAULT PAGE//
 app.get('/', function (req, res) {
