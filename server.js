@@ -283,7 +283,7 @@ app.get('/search', async function (req, res) {
 
   // GET USERS SEARCH TERM //
   let SearchQuery = parameters['ID'];
-
+  SearchQuery = SearchQuery.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
 
   // GET USERS AGE //
   let UserAge = parameters['AGE'];
