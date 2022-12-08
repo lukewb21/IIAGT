@@ -3,6 +3,11 @@
 <%- include('../partials/_head') %>
 
 <body>
+
+  <% if (redirect) { %>
+    <meta http-equiv="Refresh" content="0; url='http://localhost'" />
+  <% } %>
+
   <%- include('../partials/_background') %>
   <div class="content">
     <header>
@@ -54,7 +59,6 @@
     <div class="item2">
 
 
-
             <h2><strong>Runtime: <%= FilmRuntime %></strong></h2>
 
             <h2><strong>Age Rating: <%= AgeRating %></strong></h2>
@@ -71,7 +75,7 @@
               <h2><strong>Sorry! RT Score not found for this title.</strong></h2>
             <% } %>
 
-            <% if(FinalScore != false){ %>
+            <% if(LocalRating != false){ %>
               <h2><strong>IsItGood Rating: <%= LocalRating %></strong></h2>
             <% } else { %>
               <h2><strong>Sorry! IsItGood score unavailable due to missing ratings data.</strong></h2>

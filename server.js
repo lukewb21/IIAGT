@@ -279,6 +279,39 @@ app.get('/search', async function (req, res) {
   // GET USERS AGE //
   let UserAge = parameters['AGE'];
 
+  if ((SearchQuery === ' ') || (SearchQuery === '')){
+    let Redirect = true;
+
+    let IMDbRating = '';
+    let RottenTomatoesScore = '';
+    let FinalScore = '';
+    let LocalScore = '';
+    let Title = '';
+    let Year = '';
+    let Runtime = '';
+    let AgeRating = '';
+    let Genres = '';
+    let MoviePosterSRC = '';
+    let TitleText = 'Redirecting...';
+
+    console.log(Redirect);
+
+    res.render('pages/_Search', {
+      IMDbRating: IMDbRating,
+      RTScore: RottenTomatoesScore,
+      LocalRating: FinalScore,
+      AgeScore: LocalScore,
+      FilmName: Title,
+      FilmYear: Year,
+      FilmRuntime: Runtime,
+      AgeRating: AgeRating,
+      Genres: Genres,
+      PosterSRC: MoviePosterSRC,
+      TitleText: TitleText,
+      redirect: true
+    });
+  } else {
+
   // GET IMDB ID OF FILM //
   let FilmID = await GetMovieID(SearchQuery);
 
@@ -363,6 +396,7 @@ app.get('/search', async function (req, res) {
   }
   console.log(TitleText);
 
+  let Redirect = false;
   res.render('pages/_Search', {
     IMDbRating: IMDbRating,
     RTScore: RottenTomatoesScore,
@@ -374,10 +408,13 @@ app.get('/search', async function (req, res) {
     AgeRating: AgeRating,
     Genres: Genres,
     PosterSRC: MoviePosterSRC,
-    TitleText: TitleText
+    TitleText: TitleText,
+    redirect: false
   });
 
+  console.log(Redirect);
 
+}
 
 });
 
