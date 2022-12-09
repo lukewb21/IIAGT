@@ -72,8 +72,7 @@ async function server(){
       host     : 'localhost',
       database : 'isitgooddb',
       port     : '3306',
-      user     : 'transfer',
-      password : 'IsItGood?2022'
+      user     : 'root'
     });
 
     //Queries database for number of ratings//
