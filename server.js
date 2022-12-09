@@ -84,27 +84,27 @@ async function server(){
 
 
     //Queries database for ratings by users under 8 years of age//
-    let Group1AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = Users.UserID WHERE (FilmID ='" + FilmID + "') AND (age <= 8)");
+    let Group1AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = users.userID WHERE (FilmID ='" + FilmID + "') AND (age <= 8)");
     let Final1 = Group1AVG[0][0].avg_rating;
 
     //Queries database for ratings by users between age 8 and 16//
-    let Group2AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = Users.UserID WHERE (FilmID ='" + FilmID + "') AND (age > 8) AND (age <= 16)");
+    let Group2AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = users.userID WHERE (FilmID ='" + FilmID + "') AND (age > 8) AND (age <= 16)");
     let Final2 = Group2AVG[0][0].avg_rating;
 
     //Queries database for ratings by users between age 16 and 21//
-    let Group3AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = Users.UserID WHERE (FilmID ='" + FilmID + "') AND (age > 16) AND (age <= 21)");
+    let Group3AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = users.userID WHERE (FilmID ='" + FilmID + "') AND (age > 16) AND (age <= 21)");
     let Final3 = Group3AVG[0][0].avg_rating;
 
     //Queries database for ratings by users between age 21 and 40//
-    let Group4AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = Users.UserID WHERE (FilmID ='" + FilmID + "') AND (age > 21) AND (age <= 40)");
+    let Group4AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = users.userID WHERE (FilmID ='" + FilmID + "') AND (age > 21) AND (age <= 40)");
     let Final4 = Group4AVG[0][0].avg_rating;
 
     //Queries database for ratings by users between age 40 and 60//
-    let Group5AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = Users.UserID WHERE (FilmID ='" + FilmID + "') AND (age > 40) AND (age <= 60)");
+    let Group5AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = users.userID WHERE (FilmID ='" + FilmID + "') AND (age > 40) AND (age <= 60)");
     let Final5 = Group5AVG[0][0].avg_rating;
 
     //Queries database for ratings by users over 60//
-    let Group6AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = Users.UserID WHERE (FilmID ='" + FilmID + "') AND (age > 60)");
+    let Group6AVG = await connection.query("SELECT AVG(Rating) as avg_rating FROM film_reviews INNER JOIN users ON film_reviews.UserID = users.userID WHERE (FilmID ='" + FilmID + "') AND (age > 60)");
     let Final6 = Group6AVG[0][0].avg_rating;
 
 
