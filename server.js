@@ -72,7 +72,7 @@ async function server(){
       host     : 'localhost',
       database : 'isitgooddb',
       port     : '3306',
-      user     : 'root',
+      user     : 'transfer',
       password : 'IsItGood?2022'
     });
 
@@ -363,7 +363,7 @@ async function server(){
       }
 
       // GET LOCAL SCORE BASED ON AGE //
-      let LocalScore = NaN //await CalcWeightedScore(FilmID, UserAge);
+      let LocalScore = await CalcWeightedScore(FilmID, UserAge);
 
       // Error Handling for Age Based Score //
       if (isNaN(LocalScore)) {
