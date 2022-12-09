@@ -364,7 +364,7 @@ async function server(){
 
       // GET LOCAL SCORE BASED ON AGE //
       let LocalScore = await CalcWeightedScore(FilmID, UserAge);
-
+      LocalScore = (Math.round(LocalScore * 10) / 10);
       // Error Handling for Age Based Score //
       if (isNaN(LocalScore)) {
         LocalScore = false;
@@ -405,6 +405,8 @@ async function server(){
         }
       }
       console.log(TitleText);
+
+
 
       let Redirect = false;
       res.render('pages/_Search', {
