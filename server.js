@@ -303,6 +303,7 @@ async function server(){
       let Genres = '';
       let MoviePosterSRC = '';
       let TitleText = 'Redirecting...';
+      let DevLoves = '';
 
       console.log(Redirect);
 
@@ -318,6 +319,7 @@ async function server(){
         Genres: Genres,
         PosterSRC: MoviePosterSRC,
         TitleText: TitleText,
+        DevLoves: DevLoves,
         redirect: true
       });
     } else {
@@ -385,7 +387,7 @@ async function server(){
           break;
 
           case FinalScore >= 200.0 && FinalScore < 400.0:
-          TitleText = "OK if you've seen everything else.";
+          TitleText = "It's OK if you've seen everything else.";
           break;
 
           case FinalScore >= 400.0 && FinalScore < 600.0:
@@ -393,20 +395,35 @@ async function server(){
           break;
 
           case FinalScore >= 600.0 && FinalScore < 700.0:
-          TitleText = "It's pretty good";
+          TitleText = "It's very good";
           break;
 
-          case FinalScore >= 700.0 && FinalScore < 900.0:
+          case FinalScore >= 700.0 && FinalScore < 850.0:
           TitleText = "It's AMAZING!";
           break;
 
-          case FinalScore >= 900.0:
+          case FinalScore >= 850.0:
           TitleText = "It's probably the best.";
         }
       }
       console.log(TitleText);
 
+      let DevLoves = false;
 
+      if (Title == "Spirited Away" ||
+          Title == "Breakfast at Tiffany's" ||
+          Title == "Kiki's Delivery Service" ||
+          Title == "My Neighbour Totoro" ||
+          Title == "Guardians of the Galaxy" ||
+          Title == "Gilmore Girls" ||
+          Title == "New Girl" ||
+          Title == "Fight Club" ||
+          Title == "How To Steal A Million"){
+            DevLoves = true;
+          }
+
+      console.log('Title:', Title);
+      console.log('Developer loves?', DevLoves);
 
       let Redirect = false;
       res.render('pages/_Search', {
@@ -421,10 +438,11 @@ async function server(){
         Genres: Genres,
         PosterSRC: MoviePosterSRC,
         TitleText: TitleText,
+        DevLoves: DevLoves,
         redirect: false
       });
 
-      console.log(Redirect);
+      console.log('Redirect?', Redirect);
 
     }
 
