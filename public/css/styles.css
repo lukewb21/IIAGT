@@ -4,6 +4,7 @@ html, body {
   overflow: hidden;
 
   background-image: url("/background2.gif");
+  background-size: cover;
 }
 
 body {
