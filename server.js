@@ -8,6 +8,8 @@ async function server(){
   const http = require('http');
   const path = require('path');
   const favicon = require('serve-favicon');
+  const bodyParser = require('body-parser');
+  const mysql = require('mysql2/promise');
 
   require('dotenv').config();
 
@@ -21,7 +23,7 @@ async function server(){
   // set view engine to ejs //
   app.set('view engine', 'ejs');
   // Port website will run on //
-  app.listen(PORT, () => console.log('SERVER RUNNING ON PORT ' + PORT));
+
 
   // FUNCTIONS //
 
@@ -60,7 +62,6 @@ async function server(){
 
   async function CalcWeightedScore(FilmID, userAge) {
 
-    let mysql = require('mysql2/promise');
 
     let LocalScore = 0;
     let ageBracket = 0;
@@ -264,8 +265,6 @@ async function server(){
   // Root Route //
 
 
-  app.use('/.well-known/pki-validation/37FFA09F4A8A1A16DCFF0BCBFA6CF80F.txt', express.static('.well-known/pki-validation/37FFA09F4A8A1A16DCFF0BCBFA6CF80F.txt'));
-
   // GET FAVICON //
   app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
@@ -411,16 +410,16 @@ async function server(){
       let DevLoves = false;
 
       if (Title == "Spirited Away" ||
-          Title == "Breakfast at Tiffany's" ||
-          Title == "Kiki's Delivery Service" ||
-          Title == "My Neighbor Totoro" ||
-          Title == "Guardians of the Galaxy" ||
-          Title == "Gilmore Girls" ||
-          Title == "New Girl" ||
-          Title == "Fight Club" ||
-          Title == "How To Steal A Million"){
-            DevLoves = true;
-          }
+      Title == "Breakfast at Tiffany's" ||
+      Title == "Kiki's Delivery Service" ||
+      Title == "My Neighbor Totoro" ||
+      Title == "Guardians of the Galaxy" ||
+      Title == "Gilmore Girls" ||
+      Title == "New Girl" ||
+      Title == "Fight Club" ||
+      Title == "How To Steal A Million"){
+        DevLoves = true;
+      }
 
       console.log('Title:', Title);
       console.log('Developer loves?', DevLoves);
@@ -448,6 +447,204 @@ async function server(){
 
   });
 
+
+
+
+  // Parse incoming request bodies in a middleware before your handlers
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: true }));
+
+
+
+// SIGNUP PAGE //
+
+    // RENDER PAGE //
+  app.get('/signup', (req, res) => {
+    res.render('pages/_Signup');
+  })
+
+    // HANDLE SIGNUP FORM //
+  app.post('/signup', async function (req, res) {
+
+    const connection = await mysql.createConnection({
+      host     : 'localhost',
+      database : 'isitgooddb',
+      port     : '3306',
+      user     : 'root',
+      password : 'IsItGood?2022root'
+    });
+
+    // Get the values of the form fields from the request body
+    let firstname = req.body.firstname;
+    console.log('First Name:', firstname);
+
+    let lastname = req.body.lastname;
+    console.log('Last Name:', lastname);
+
+    let age = req.body.age;
+    console.log('Age:', age);
+
+    let username = req.body.username;
+    console.log('Username:', username);
+
+    let email = req.body.email;
+    console.log('Email', email);
+
+    let password = req.body.password;
+    console.log('Password', password);
+
+    // CHECK IF USERNAME ALREADY EXISTS //
+    let usernameInDB = await connection.query("SELECT count(*) as count FROM users WHERE Username = '" + username + "'");
+    usernameInDB = usernameInDB[0][0].count;
+
+    if (usernameInDB != 0) {
+      usernameExists = true;
+      usernameInvalid = '<p style="color: red;"> Username is already in use </p>';
+    } else {
+      usernameExists = false;
+      usernameInvalid = '';
+    }
+
+    console.log('username exists?', usernameExists);
+
+    // CHECK IF EMAIL ALREADY EXISTS //
+    let emailInDB = await connection.query("SELECT count(*) as count FROM users WHERE Email = '" + email + "'");
+    emailInDB = emailInDB[0][0].count;
+
+    if (emailInDB != 0) {
+      emailExists = true;
+      emailInvalid = '<p style="color: red;"> Email address is already in use </p>';
+    } else {
+      emailExists = false;
+      emailInvalid = '';
+    }
+
+    if (email == ''){
+      emailExists = false;
+      emailInvalid = '';
+    }
+
+    console.log('email exists?', emailExists);
+
+    if (firstname == '' || lastname == '' || username == '' || email == '' || password == '' || age == '') {
+      emptyFields = '<p style="color: red;"> Please complete all fields </p>'
+      missingFields = true;
+    } else {
+      emptyFields = '';
+      missingFields = false;
+    }
+    console.log('missing fields?', missingFields);
+
+    if (emailExists == false && usernameExists == false && missingFields == false) {
+      signupSuccess = true;
+
+      connection.query("INSERT INTO Users (FirstName, LastName, Username, Age, Email, Password) VALUES ('" + firstname + "', '" + lastname + "', '" + username + "', '" + age + "', '" + email + "', '" + password + "')");
+      console.log('User Added!');
+    } else {
+      signupSuccess = false;
+    }
+
+
+    if (signupSuccess == true) {
+      console.log('Signup successful!');
+      res.send('Signup successful!');
+    } else {
+      console.log('Signup unsuccessful.');
+      res.send('<head> <title>Sign Up</title> <style> /* Style the form elements */ body { font-family: "Helvetica", serif; margin: 0; height: 100%; } h1 { font-size: 60px; color: #4ecda7; white-space: nowrap; border: none; } form { width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 4px; } label { display: block; margin-bottom: 8px; } input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 12px 20px; margin-bottom: 20px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; } input[type="submit"] { background-color: #4ecda7; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; } input[type="submit"]:hover { background-color: #00000; } #background_video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; } </style> <!-- REQUESTS CRAWLERS DONT INDEX THE SITE --> <meta name="robots" content="noindex"> <!-- EXTERNAL CSS, JS, FONTS --> <link rel="stylesheet" href="/css/styles.css" /> <script src="scraper.js"></script> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> <meta charset="utf-8"> <link rel="preconnect" href="https://fonts.googleapis.com"> </head> <body> <video autoplay muted loop id="background_video"> <source src="background3.mp4" type="video/mp4"> </video> <div class="content"> <header> <h1 id="pagetitle">IS IT ACTUALLY GOOD?</h1> </header> <br> <form id="signup-form" action="/signup" method="POST" name="signup-form"> <h2>Sign Up</h2> <div> <div id="FirstNameDiv" style="display: inline-block; float: left; width: 47%; margin: 5px;"> <label for="firstname">First Name:</label> <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" value="' + firstname + '"> </div> <div id="LastNameDiv" style="display: inline-block; float: left; width: 47%; margin: 5px;"> <label for="lastname">Last Name:</label> <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" value="' + lastname + '"> </div> </div> <div style="clear: both;"></div> <label for="username">Username:</label> <input type="text" id="username" name="username" placeholder="Enter your username" value="' + username + '">' + usernameInvalid + ' <label for="email">Email:</label> <input type="email" id="email" name="email" placeholder="Enter your email" value="' + email + '"> ' + emailInvalid + ' <label for="password">Password:</label> <input type="password" id="password" name="password" placeholder="Enter your password" value="' + password + '"> <div id="AgeDiv" style="width: 100%;"> <label for="age">Age:</label> <input type="number" id="age" name="age" placeholder="Enter your age" style="width: 98%; height: 30px;" value="' + age + '"> </div> <br> <input type="submit" value="Sign Up" onclick="submitForm()">' + emptyFields + ' </form> <script> function submitForm() { const form = document.getElementById("signup-form"); form.submit(); } </script> <br> <br> <br> <br> <br> </body>');
+    }
+  });
+
+
+
+
+// SIGN IN PAGE //
+
+    // RENDER PAGE //
+  app.get('/signin', (req, res) => {
+    res.render('pages/_SignIn');
+  })
+
+    // HANDLE SIGNIN FORM //
+  app.post('/signin', async function (req, res) {
+
+    // SIGN IN TO DATABASE //
+    const connection = await mysql.createConnection({
+      host     : 'localhost',
+      database : 'isitgooddb',
+      port     : '3306',
+      user     : 'root',
+      password : 'IsItGood?2022'
+    });
+
+    // GET VALUES FROM FORM //
+
+    let email = req.body.email;
+    console.log('Email', email);
+
+    let password = req.body.password;
+    console.log('Password', password);
+
+    // CHECK IF EMAIL ALREADY EXISTS //
+    let emailInDB = await connection.query("SELECT count(*) as count FROM users WHERE Email = '" + email + "'");
+    emailInDB = emailInDB[0][0].count;
+
+    if (emailInDB != 0) {
+      emailExists = true;
+      emailInvalid = '';
+    } else {
+      emailExists = false;
+      emailInvalid = '<a style="color: red;" href="/signup"> No account is associated with this email. Click here to signup </a>';
+    }
+
+    console.log('email exists?', emailExists);
+
+    // CHECK IF FIELDS ARE BLANK //
+    if (email == '' || password == '') {
+      emptyFields = '<p style="color: red;"> Please complete all fields </p>'
+      missingFields = true;
+    } else {
+      emptyFields = '';
+      missingFields = false;
+    }
+
+    console.log('missing fields?', missingFields);
+
+    // IF FIELDS ARE FILLED AND EMAIL IS VALID //
+    if (emailExists == true && missingFields == false) {
+
+      // GET CORRECT PASSWORD FROM DATABASE //
+      let databasePass = await connection.query("SELECT Password as pass FROM Users WHERE Email = '" + email + "'");
+      databasePass = databasePass[0][0].pass;
+      console.log(databasePass);
+
+      // IF PASSWORDS MATCH, LOGIN ACCEPTED //
+      if (databasePass == password) {
+        signinSuccess = true;
+        console.log('User Logged In!');
+        passwordInvalid = '';
+      } else {
+        signinSuccess = false;
+        passwordInvalid = '<p style="color: red;">Incorrect Password</p>';
+      }
+
+
+    if (signinSuccess == true) {
+      console.log('Signin successful!');
+      res.send('<head> <!-- REQUESTS CRAWLERS DONT INDEX THE SITE --> <meta name="robots" content="noindex"> <!-- EXTERNAL CSS, JS, FONTS --> <link rel="stylesheet" href="/css/styles.css" /> <script src=""></script> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> <meta charset="utf-8"> <link rel="preconnect" href="https://fonts.googleapis.com"> <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js%22%3E"></script> <!-- BROWSER TAB TITLE --> <title>IsItGood</title> </head> <body> <meta http-equiv="Refresh" content="0; url=' + '/' + '" /> <video autoplay muted loop id="background_video"> <source src="background3.mp4" type="video/mp4"> </video> <div class="content"> <header> <h1 id="pagetitle">LOGIN SUCCESSFUL! REDIRECTING...</h1> </header> </body>');
+    } else {
+      console.log('Signin unsuccessful.');
+      res.send('<head> <title>Sign Up</title> <style> /* Style the form elements */ body { font-family: "Helvetica", serif; margin: 0; height: 100%; } h1 { font-size: 60px; color: #4ecda7; white-space: nowrap; border: none; } form { width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 4px; } label { display: block; margin-bottom: 8px; } input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 12px 20px; margin-bottom: 20px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; } input[type="submit"] { background-color: #4ecda7; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; } input[type="submit"]:hover { background-color: #00000; } #background_video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; } </style> <!-- REQUESTS CRAWLERS DONT INDEX THE SITE --> <meta name="robots" content="noindex"> <!-- EXTERNAL CSS, JS, FONTS --> <link rel="stylesheet" href="/css/styles.css" /> <script src="scraper.js"></script> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> <meta charset="utf-8"> <link rel="preconnect" href="https://fonts.googleapis.com"> </head> <body> <video autoplay muted loop id="background_video"> <source src="background3.mp4" type="video/mp4"> </video> <div class="content"> <header> <h1 id="pagetitle">IS IT ACTUALLY GOOD?</h1> </header> <br> <form id="signin-form" action="/signin" method="POST" name="signin-form"> <h2>Log In</h2> <label for="email">Email:</label> <input type="email" id="email" name="email" placeholder="Enter your email" value="' + email + '"> ' + emailInvalid + ' <label for="password">Password:</label> <input type="password" id="password" name="password" placeholder="Enter your password" value="' + password + '"> ' + passwordInvalid + ' <input type="submit" value="Sign In" onclick="submitForm()"> ' + emptyFields + ' </form> <script> function submitForm() { const form = document.getElementById("signin-form"); form.submit(); } </script> <br> <br> <br> <br> <br> </body>');
+    }
+  } else {
+    console.log('Signin unsuccessful.');
+    res.send('<head> <title>Sign Up</title> <style> /* Style the form elements */ body { font-family: "Helvetica", serif; margin: 0; height: 100%; } h1 { font-size: 60px; color: #4ecda7; white-space: nowrap; border: none; } form { width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 4px; } label { display: block; margin-bottom: 8px; } input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 12px 20px; margin-bottom: 20px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; } input[type="submit"] { background-color: #4ecda7; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; } input[type="submit"]:hover { background-color: #00000; } #background_video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; } </style> <!-- REQUESTS CRAWLERS DONT INDEX THE SITE --> <meta name="robots" content="noindex"> <!-- EXTERNAL CSS, JS, FONTS --> <link rel="stylesheet" href="/css/styles.css" /> <script src="scraper.js"></script> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> <meta charset="utf-8"> <link rel="preconnect" href="https://fonts.googleapis.com"> </head> <body> <video autoplay muted loop id="background_video"> <source src="background3.mp4" type="video/mp4"> </video> <div class="content"> <header> <h1 id="pagetitle">IS IT ACTUALLY GOOD?</h1> </header> <br> <form id="signin-form" action="/signin" method="POST" name="signin-form"> <h2>Log In</h2> <label for="email">Email:</label> <input type="email" id="email" name="email" placeholder="Enter your email" value="' + email + '"> ' + emailInvalid + ' <label for="password">Password:</label> <input type="password" id="password" name="password" placeholder="Enter your password" value="' + password + '"> <input type="submit" value="Sign In" onclick="submitForm()"> ' + emptyFields + ' </form> <script> function submitForm() { const form = document.getElementById("signin-form"); form.submit(); } </script> <br> <br> <br> <br> <br> </body>');
+  }
+  })
+
+
+
+
+  app.listen(PORT, () => console.log('SERVER RUNNING ON PORT ' + PORT));
 
 }
 server();
