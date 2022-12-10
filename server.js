@@ -538,7 +538,7 @@ async function server(){
     if (emailExists == false && usernameExists == false && missingFields == false) {
       signupSuccess = true;
 
-      connection.query("INSERT INTO Users (FirstName, LastName, Username, Age, Email, Password) VALUES ('" + firstname + "', '" + lastname + "', '" + username + "', '" + age + "', '" + email + "', '" + password + "')");
+      connection.query("INSERT INTO users (FirstName, LastName, Username, Age, Email, Password) VALUES ('" + firstname + "', '" + lastname + "', '" + username + "', '" + age + "', '" + email + "', '" + password + "')");
       console.log('User Added!');
     } else {
       signupSuccess = false;
@@ -613,7 +613,7 @@ async function server(){
     if (emailExists == true && missingFields == false) {
 
       // GET CORRECT PASSWORD FROM DATABASE //
-      let databasePass = await connection.query("SELECT Password as pass FROM Users WHERE Email = '" + email + "'");
+      let databasePass = await connection.query("SELECT Password as pass FROM users WHERE Email = '" + email + "'");
       databasePass = databasePass[0][0].pass;
       console.log(databasePass);
 
