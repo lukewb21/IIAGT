@@ -459,9 +459,9 @@ async function server(){
 // SIGNUP PAGE //
 
     // RENDER PAGE //
-  app.get('/signup', (req, res) => {
-    res.render('views/pages/_Signup');
-  })
+    app.get('/signup', function (req, res) {
+      res.render('pages/_Signup');
+    });
 
     // HANDLE SIGNUP FORM //
   app.post('/signup', async function (req, res) {
@@ -560,9 +560,9 @@ async function server(){
 // SIGN IN PAGE //
 
     // RENDER PAGE //
-  app.get('/signin', (req, res) => {
-    res.render('views/pages/_SignIn');
-  })
+    app.get('/signin', function (req, res) {
+      res.render('pages/_SignIn');
+    });
 
     // HANDLE SIGNIN FORM //
   app.post('/signin', async function (req, res) {
