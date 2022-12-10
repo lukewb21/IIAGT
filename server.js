@@ -460,7 +460,7 @@ async function server(){
 
     // RENDER PAGE //
   app.get('/signup', (req, res) => {
-    res.render('pages/_Signup');
+    res.render('views/pages/_Signup');
   })
 
     // HANDLE SIGNUP FORM //
@@ -561,7 +561,7 @@ async function server(){
 
     // RENDER PAGE //
   app.get('/signin', (req, res) => {
-    res.render('pages/_SignIn');
+    res.render('views/pages/_SignIn');
   })
 
     // HANDLE SIGNIN FORM //
