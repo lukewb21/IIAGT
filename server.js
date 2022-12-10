@@ -413,7 +413,7 @@ async function server(){
       if (Title == "Spirited Away" ||
           Title == "Breakfast at Tiffany's" ||
           Title == "Kiki's Delivery Service" ||
-          Title == "My Neighbour Totoro" ||
+          Title == "My Neighbor Totoro" ||
           Title == "Guardians of the Galaxy" ||
           Title == "Gilmore Girls" ||
           Title == "New Girl" ||
