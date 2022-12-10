@@ -573,7 +573,7 @@ async function server(){
       database : 'isitgooddb',
       port     : '3306',
       user     : 'root',
-      password : 'IsItGood?2022'
+      password : 'IsItGood?2022root'
     });
 
     // GET VALUES FROM FORM //
