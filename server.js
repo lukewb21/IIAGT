@@ -10,7 +10,7 @@ async function server(){
   const favicon = require('serve-favicon');
   const bodyParser = require('body-parser');
   const mysql = require('mysql2/promise');
-
+  const crypto = require('crypto');
   require('dotenv').config();
 
   // store port so i dont have to remember it //
@@ -493,6 +493,10 @@ async function server(){
     let password = req.body.password;
     console.log('Password', password);
 
+    let passwordhash = crypto.createHash('sha256').update(password).digest('hex');
+
+    console.log('Hash', passwordhash);
+
     // CHECK IF USERNAME ALREADY EXISTS //
     let usernameInDB = await connection.query("SELECT count(*) as count FROM users WHERE Username = '" + username + "'");
     usernameInDB = usernameInDB[0][0].count;
@@ -538,7 +542,7 @@ async function server(){
     if (emailExists == false && usernameExists == false && missingFields == false) {
       signupSuccess = true;
 
-      connection.query("INSERT INTO users (FirstName, LastName, Username, Age, Email, Password) VALUES ('" + firstname + "', '" + lastname + "', '" + username + "', '" + age + "', '" + email + "', '" + password + "')");
+      connection.query("INSERT INTO users (FirstName, LastName, Username, Age, Email, Password) VALUES ('" + firstname + "', '" + lastname + "', '" + username + "', '" + age + "', '" + email + "', '" + passwordhash + "')");
       console.log('User Added!');
     } else {
       signupSuccess = false;
@@ -584,6 +588,9 @@ async function server(){
     let password = req.body.password;
     console.log('Password', password);
 
+    let passwordhash = crypto.createHash('sha256').update(password).digest('hex');
+
+    console.log('Hash', passwordhash);
     // CHECK IF EMAIL ALREADY EXISTS //
     let emailInDB = await connection.query("SELECT count(*) as count FROM users WHERE Email = '" + email + "'");
     emailInDB = emailInDB[0][0].count;
@@ -618,7 +625,7 @@ async function server(){
       console.log(databasePass);
 
       // IF PASSWORDS MATCH, LOGIN ACCEPTED //
-      if (databasePass == password) {
+      if (databasePass == passwordhash) {
         signinSuccess = true;
         console.log('User Logged In!');
         passwordInvalid = '';
