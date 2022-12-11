@@ -54,20 +54,22 @@
         </script>
 
 
-        <!-- VERY UNFINISHED -->
-        <!--  <input style="font-size:18pt;height:40px;width:300px;" id="search" class="userURL" type="text" placeholder="Type a movie title..."></input> -->
 
         <div class="button_container">
 
 
-          <form #userURL="ngForm">
-            <input style="font-size:18pt;height:40px;width:300px;" id="search" class="userURL" type="text" placeholder="Type a movie title..." required></input>
+          <form action='/search'>
 
-            <input style="font-size:18pt;height:40px;width:300px;" id="age" type="number" min="1" max="150" step="1" placeholder="How old are you?" required></input>
+            <input style="font-size:18pt;height:40px;width:300px;" name='ID' id="ID" class="userURL" type="text" placeholder="Type a movie title..."></input>
 
+            <input style="font-size:18pt;height:40px;width:300px;" name='AGE' id="AGE" type="text" min="1" max="150" step="1" placeholder="How old are you?"></input>
             <br>
             <br>
-            <button id="subBtn" class="btn" type="submit" onclick='javascript: window.open("search?ID=" + document.getElementById("search").value + "&AGE=" + document.getElementById("age").value);' [disabled]="!userURL.form.valid">SEARCH</button>
+            <button id="subBtn" class="btn" type='submit'>
+              SEARCH
+           </button>
+
+
           </form>
 
 </div>
@@ -79,6 +81,12 @@
 </div>
 </div>
 
+<div class="navbar">
+  <a href="/" class="active">Home</a>
+  <a href="/signin">Sign In</a>
+  <a href="/signup">Sign Up</a>
+  <a href="/about">About</a>
+</div>
 
 </body>
 </html>
