@@ -569,7 +569,7 @@ async function server(){
     });
 
     // HANDLE SIGNIN FORM //
-  app.post('/signin', async function (req, res) {
+    app.post('/signin', async function (req, res) {
 
     // SIGN IN TO DATABASE //
     const connection = await mysql.createConnection({
@@ -649,7 +649,12 @@ async function server(){
   })
 
 
+  // ABOUT PAGE //
 
+      // RENDER PAGE //
+      app.get('/about', function (req, res) {
+        res.render('pages/_About');
+      });
 
   app.listen(PORT, () => console.log('SERVER RUNNING ON PORT ' + PORT));
 
