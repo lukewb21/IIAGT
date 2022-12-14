@@ -73,8 +73,8 @@ async function server(){
       host     : 'localhost',
       database : 'isitgooddb',
       port     : '3306',
-      user     : 'root',
-      password : 'IsItGood?2022root'
+      user     : 'siteaccess',
+      password : 'sitepass'
     });
 
     //Queries database for number of ratings//
@@ -470,8 +470,8 @@ async function server(){
       host     : 'localhost',
       database : 'isitgooddb',
       port     : '3306',
-      user     : 'root',
-      password : 'IsItGood?2022root'
+      user     : 'siteaccess',
+      password : 'sitepass'
     });
 
     // Get the values of the form fields from the request body
@@ -576,8 +576,8 @@ async function server(){
       host     : 'localhost',
       database : 'isitgooddb',
       port     : '3306',
-      user     : 'root',
-      password : 'IsItGood?2022root'
+      user     : 'siteaccess',
+      password : 'sitepass'
     });
 
     // GET VALUES FROM FORM //
