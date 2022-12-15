@@ -11,6 +11,7 @@ async function server(){
   const bodyParser = require('body-parser');
   const mysql = require('mysql2/promise');
   const crypto = require('crypto');
+  const randomstring = require('randomstring');
   require('dotenv').config();
 
   // store port so i dont have to remember it //
@@ -266,7 +267,7 @@ async function server(){
 
 
   // GET FAVICON //
-  app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+  app.use(favicon(path.join(__dirname, 'public', 'favicon2.ico')));
 
 
 
@@ -636,6 +637,13 @@ async function server(){
 
 
     if (signinSuccess == true) {
+      // Generate a random string of characters for the SessionID
+      const sessionID = randomstring.generate();
+
+      // Set the cookie with the SessionID
+      res.cookie("SessionID", sessionID);
+
+
       console.log('Signin successful!');
       res.send('<head> <!-- REQUESTS CRAWLERS DONT INDEX THE SITE --> <meta name="robots" content="noindex"> <!-- EXTERNAL CSS, JS, FONTS --> <link rel="stylesheet" href="/css/styles.css" /> <script src=""></script> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,700&display=swap" rel="stylesheet"> <meta charset="utf-8"> <link rel="preconnect" href="https://fonts.googleapis.com"> <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js%22%3E"></script> <!-- BROWSER TAB TITLE --> <title>IsItGood</title> </head> <body> <meta http-equiv="Refresh" content="0; url=' + '/' + '" /> <video autoplay muted loop id="background_video"> <source src="background3.mp4" type="video/mp4"> </video> <div class="content"> <header> <h1 id="pagetitle">LOGIN SUCCESSFUL! REDIRECTING...</h1> </header> </body>');
     } else {
